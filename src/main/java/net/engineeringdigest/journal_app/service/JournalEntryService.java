@@ -31,6 +31,11 @@ public class JournalEntryService {
     public Optional<JournalEntry> findById(ObjectId id){
         return journalEntryReposiotory.findById(id);
     }
+
+    // delete by id
+    public void deleteById(ObjectId id) {
+        journalEntryReposiotory.deleteById(id);
+    }
 }
 
 // controller ---> service ---> repository
