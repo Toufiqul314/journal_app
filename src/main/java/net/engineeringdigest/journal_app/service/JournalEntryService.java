@@ -1,7 +1,9 @@
 package net.engineeringdigest.journal_app.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,11 @@ public class JournalEntryService {
     // get all
     public List<JournalEntry> getAll() {
         return journalEntryReposiotory.findAll();
+    }
+
+    // find by id
+    public Optional<JournalEntry> findById(ObjectId id){
+        return journalEntryReposiotory.findById(id);
     }
 }
 

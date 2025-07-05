@@ -1,10 +1,12 @@
 package net.engineeringdigest.journal_app.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,25 +35,26 @@ public class JournalEntryControllerV2 {
     }
 
     @PostMapping
-    public boolean createEntry(@RequestBody JournalEntry myEntry) {
-
+    public JournalEntry createEntry(@RequestBody JournalEntry myEntry) {
+        // Set the date to the current time
+        myEntry.setDate(LocalDateTime.now());
         journalEntryService.saveEntry(myEntry);
-        return true;
+        return myEntry;
     }
 
     @GetMapping("/id/{myId}")
-    public JournalEntry getJournalEntryById(@PathVariable long myId) {
+    public JournalEntry getJournalEntryById(@PathVariable ObjectId myId) {
 
-        return null;
+        return journalEntryService.findById(myId).orElse(null);
     }
 
     @DeleteMapping("/id/{myId}")
-    public JournalEntry deleteJournalEntryById(@PathVariable long myId) {
+    public JournalEntry deleteJournalEntryById(@PathVariable ObjectId myId) {
         return null;
     }
 
     @PutMapping("/id/{id}")
-    public JournalEntry updateJournalById(@PathVariable Long id, @RequestBody JournalEntry myEntry) {
+    public JournalEntry updateJournalById(@PathVariable ObjectId id, @RequestBody JournalEntry myEntry) {
         return null;
     }
 }
