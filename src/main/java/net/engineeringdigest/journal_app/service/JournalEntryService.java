@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import net.engineeringdigest.journal_app.entity.JournalEntry;
+import net.engineeringdigest.journal_app.entity.User;
 import net.engineeringdigest.journal_app.repository.JournalEntryReposiotory;
 
 @Component
@@ -20,11 +21,17 @@ public class JournalEntryService {
     @Autowired
     private JournalEntryReposiotory journalEntryReposiotory;
 
+    @Autowired
+    private UserService userService;
+
     // save entry
-    public void saveEntry(JournalEntry entry) {
+    public void saveEntry(JournalEntry entry, String username) {
         try {
+            User user = userService.findByUsername(username);
             entry.setDate(LocalDateTime.now());
-            journalEntryReposiotory.save(entry);
+            JournalEntry saved = journalEntryReposiotory.save(entry);
+            user.getJournalEntries().add(saved);
+            userService.saveEntry(user);
         } catch (Exception e) {
             log.error("Exception", e);
         }
