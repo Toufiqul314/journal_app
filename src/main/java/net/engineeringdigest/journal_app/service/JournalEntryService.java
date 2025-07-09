@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import net.engineeringdigest.journal_app.entity.JournalEntry;
@@ -25,15 +26,19 @@ public class JournalEntryService {
     private UserService userService;
 
     // save entry
+    @Transactional
     public void saveEntry(JournalEntry entry, String username) {
+
         try {
             User user = userService.findByUsername(username);
             entry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryReposiotory.save(entry);
             user.getJournalEntries().add(saved);
+            user.setUsername(null);
             userService.saveEntry(user);
         } catch (Exception e) {
-            log.error("Exception", e);
+            System.out.println(e);
+            throw new RuntimeException("An error occurred while saving the journal entry.", e);
         }
     }
 
@@ -48,7 +53,10 @@ public class JournalEntryService {
     }
 
     // delete by id
-    public void deleteById(ObjectId id) {
+    public void deleteById(ObjectId id, String username) {
+        User user = userService.findByUsername(username);
+        user.getJournalEntries().removeIf(entry -> entry.getId().equals(id));
+        userService.saveEntry(user);
         journalEntryReposiotory.deleteById(id);
     }
 }
